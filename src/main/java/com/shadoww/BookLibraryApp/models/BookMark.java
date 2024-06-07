@@ -56,23 +56,9 @@ public class BookMark implements Serializable {
 
 
 
-//    public String getUrl() {
-//        return "/book/"+ book.getId() + "/ch/" + chapter.getNumberOfPage();
-//    }
-
-
-//    public boolean isValid() {
-//        return this.book != null &&
-//               this.catalog != null &&
-//               this.chapter != null &&
-//               this.owner != null &&
-//               this.paragraph >= 0;
-//    }
     @Override
     public String toString() {
         return "BookMark{" +
-//                "book=" + book +
-//                ", chapter=" + chapter +
                 ", paragraph=" + paragraph +
                 '}';
     }

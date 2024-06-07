@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shadoww.BookLibraryApp.models.images.ChapterImage;
 import com.shadoww.BookLibraryApp.util.instances.ChapterInstance;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +42,7 @@ public class Chapter implements Serializable {
 
 
     //    @Column(name = "number_of_page")
-//    @Min(value = '0', message = "Number of chapter must be bigger than 0")
+    @Min(value = '0', message = "Number of chapter must be bigger than 0")
     private int numberOfPage;
 
 
