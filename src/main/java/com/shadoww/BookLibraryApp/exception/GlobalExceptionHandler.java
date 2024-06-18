@@ -20,81 +20,33 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ExceptionResponse> handleAccessDeniedException(AccessDeniedException e, WebRequest request) {
-
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("status", "FORBIDDEN");
-//        response.put("message", e.getMessage());
-
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-
         return buildErrorResponse(e, HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException e, WebRequest request) {
-
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("status", "Error");
-//        response.put("message", e.getMessage());
-
-
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-
+        System.out.println("illegal");
         return buildErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException e, WebRequest request) {
-
-        System.out.println(e.getMessage());
-
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("status", "NO_FOUND");
-//        response.put("message", e.getMessage());
-
-
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-
         return buildErrorResponse(e, HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(NullEntityReferenceException.class)
     public ResponseEntity<?> handleEntityNotFoundException(NullEntityReferenceException e, WebRequest request) {
-
-//        System.out.println(e.getMessage());
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("status", "BAD_REQUEST");
-//        response.put("message", e.getMessage());
-
-
-//        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-
         return buildErrorResponse(e, HttpStatus.BAD_REQUEST, request);
     }
 
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ExceptionResponse> handleExpiredJwtException(ExpiredJwtException e, WebRequest request) {
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "NO_AUTHORIZED");
-//        response.put("error", e.getMessage());
-
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-
         return buildErrorResponse(e,HttpStatus.UNAUTHORIZED, request);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUsernameNotFoundException(UsernameNotFoundException e, WebRequest request) {
-
-//        System.out.println("error with finding user");
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "NO_FOUND");
-//        response.put("error", e.getMessage());
-//
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-
         return buildErrorResponse(e, HttpStatus.NOT_FOUND, request);
     }
 
@@ -105,21 +57,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
-
-        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+        return buildErrorResponse(ex, "Пошта чи пароль неправильні", HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e, WebRequest request) {
-
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("message", "INTERNAL_SERVER_ERROR");
-//        response.put("error", e.getMessage());
-
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-
-        return buildErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    @ExceptionHandler(ValueAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleValueAlreadyExistsException(ValueAlreadyExistsException e, WebRequest request) {
+        return buildErrorResponse(e, HttpStatus.CONFLICT, request);
     }
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e, WebRequest request) {
+//
+//        System.out.println(e.getMessage());
+////        Map<String, Object> response = new HashMap<>();
+////        response.put("message", "INTERNAL_SERVER_ERROR");
+////        response.put("error", e.getMessage());
+//
+////        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//
+//        return buildErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+//    }
 
     private ResponseEntity<ExceptionResponse> buildErrorResponse(Exception ex, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(

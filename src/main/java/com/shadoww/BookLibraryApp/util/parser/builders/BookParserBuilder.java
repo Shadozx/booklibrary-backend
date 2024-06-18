@@ -3,6 +3,8 @@ package com.shadoww.BookLibraryApp.util.parser.builders;
 import com.shadoww.BookLibraryApp.util.parser.parsers.BookParser;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public class BookParserBuilder {
 
@@ -11,6 +13,8 @@ public class BookParserBuilder {
 
 
     private ParserBuilder parserBuilder;
+
+
 
     public BookParserBuilder(ParserBuilder parserBuilder) {
         this.parserBuilder = parserBuilder;
@@ -30,10 +34,20 @@ public class BookParserBuilder {
         return this;
     }
 
+//    public BookParserBuilder bookMatcher(String match) {
+//        this.bookParser.setMatcher(match);
+//
+//        return this;
+//    }
+
+    public BookParserBuilder matchers(String... matchers) {
+        this.bookParser.setMatchers(Arrays.asList(matchers));
+
+        return this;
+    }
+
     public ParserBuilder and() {
 
         return this.parserBuilder;
     }
-
-
 }

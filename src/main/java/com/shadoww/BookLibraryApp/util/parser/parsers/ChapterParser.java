@@ -1,8 +1,8 @@
 package com.shadoww.BookLibraryApp.util.parser.parsers;
 
-import com.shadoww.BookLibraryApp.models.Book;
-import com.shadoww.BookLibraryApp.models.Chapter;
-import com.shadoww.BookLibraryApp.models.images.ChapterImage;
+import com.shadoww.BookLibraryApp.model.Book;
+import com.shadoww.BookLibraryApp.model.Chapter;
+import com.shadoww.BookLibraryApp.model.image.ChapterImage;
 import com.shadoww.BookLibraryApp.util.instances.ChapterInstance;
 import com.shadoww.BookLibraryApp.util.parser.interfaces.*;
 import com.shadoww.BookLibraryApp.util.parser.selectors.ChapterSelector;
@@ -30,17 +30,12 @@ public class ChapterParser {
     @Setter
     private ChapterSelectors chapterSelectors;
 
-
     private List<Chapter> chapters;
-
 
     @Getter
     private final List<ChapterImage> chapterImages = new ArrayList<>();
 
-
     private String bookUrl;
-
-
 
 
     public List<Chapter> parse(String bookUrl, Book book) throws IOException {
@@ -60,8 +55,9 @@ public class ChapterParser {
                 if (chapterSelectors != null) {
 
                     // видаляємо не потрібні елементи
-                    if (chapterSelectors.getForDeleteElements() != null) page.select(String.join(", ", chapterSelectors.getForDeleteElements())).remove();
-
+                    if (chapterSelectors.getDeleteElements() != null) {
+                        page.select(String.join(", ", chapterSelectors.getDeleteElements())).remove();
+                    }
 
                     Stack<ChapterInstance> parsedChapterInstances = getChapterInstances(chapterSelectors, page);
 
@@ -126,7 +122,6 @@ public class ChapterParser {
         return null;
     }
 
-
     private Stack<ChapterInstance> getChapterInstances(ChapterSelectors chapterSelectors, Document page) {
 
         for(ChapterSelector chapterSelector : chapterSelectors) {
@@ -140,7 +135,6 @@ public class ChapterParser {
         return null;
 
     }
-
 
     private Stack<ChapterInstance> getPage(ChapterSelector chapterSelector, Document page) {
         String selector = chapterSelector.getSelector();
@@ -178,12 +172,12 @@ public class ChapterParser {
 
 
                 for (Element el : elements) {
-
-
                     if (chapterSelector.getTitles().contains(el.tagName() + (!el.className().equals("") ? ("." + el.className()) : ""))) {
 
                         TextConvector textConvector = chapterSelector.getTextConvector();
-                        if (textConvector != null) textConvector.transform(chapterInstances, el);
+                        if (textConvector != null) {
+                            textConvector.transform(chapterInstances, el);
+                        }
 
                         else {
                             ChapterInstance prev = !chapterInstances.isEmpty() ? chapterInstances.pop() : new ChapterInstance();
@@ -256,13 +250,13 @@ public class ChapterParser {
 
 
         }
+
         return null;
     }
 
-
     private void addTitle(Element el, ChapterInstance prev, Stack<ChapterInstance> chapterInstances) {
 
-        if(prev.getTitle().equals("Примечания") && el.text().matches("\\d+")) {
+        if(prev.getTitle().equals("Примечания") && prev.getTitle().equals("Примітки") && el.text().matches("\\d+")) {
 
             prev.addText(ParserHelper.formatText(el, ElementType.Paragraph).toPatternText());
 
@@ -273,12 +267,10 @@ public class ChapterParser {
         // якщо існує глава, але має назву глави но немає тексту
         else if (!prev.isTitleEmpty() && prev.isTextEmpty()) {
 
-            prev.addTitle(el.text());
+            prev.addTitle(". " + el.text());
             chapterInstances.push(prev);
 
         }
-
-
         else {
             chapterInstances.push(prev);
 
@@ -350,7 +342,9 @@ public class ChapterParser {
 
 
     private List<Chapter> addNumber(List<Chapter> chapters) {
-        for(int i = 1; i <= chapters.size(); i++) chapters.get(i-1).setNumberOfPage(i);
+        for(int i = 1; i <= chapters.size(); i++) {
+            chapters.get(i-1).setChapterNumber(i);
+        }
 
         return chapters;
     }

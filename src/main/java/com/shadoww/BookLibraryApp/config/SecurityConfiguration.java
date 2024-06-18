@@ -2,33 +2,21 @@ package com.shadoww.BookLibraryApp.config;
 
 
 import com.shadoww.BookLibraryApp.auth.JwtAuthenticationFilter;
-import com.shadoww.BookLibraryApp.models.user.Role;
-import com.shadoww.BookLibraryApp.services.PeopleService;
+import com.shadoww.BookLibraryApp.service.interfaces.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -43,18 +31,16 @@ import java.util.List;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
-
-
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final PeopleService peopleService;
+    private final PersonService personService;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter, PeopleService peopleService, PasswordEncoder passwordEncoder) {
+    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter, PersonService personService, PasswordEncoder passwordEncoder) {
         this.jwtAuthFilter = jwtAuthFilter;
 
-        this.peopleService = peopleService;
+        this.personService = personService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -78,10 +64,6 @@ public class SecurityConfiguration {
                     corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;
                 }))
-//                .authorizeHttpRequests(request -> request
-//                        .requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
-//                        .anyRequest().authenticated()
-//                )
                 .authenticationProvider(authenticationProvider())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -92,7 +74,7 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(peopleService);
+        provider.setUserDetailsService(personService);
         provider.setPasswordEncoder(passwordEncoder);
 
         return provider;

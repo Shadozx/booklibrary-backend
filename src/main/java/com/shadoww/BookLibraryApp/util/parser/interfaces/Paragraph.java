@@ -1,7 +1,7 @@
 package com.shadoww.BookLibraryApp.util.parser.interfaces;
 
-import com.shadoww.BookLibraryApp.models.Book;
-import com.shadoww.BookLibraryApp.models.images.ChapterImage;
+import com.shadoww.BookLibraryApp.model.Book;
+import com.shadoww.BookLibraryApp.model.image.ChapterImage;
 import com.shadoww.BookLibraryApp.util.instances.ChapterInstance;
 import com.shadoww.BookLibraryApp.util.texformatters.elements.TextElements;
 import org.jsoup.nodes.Element;

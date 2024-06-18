@@ -8,6 +8,5 @@ import java.util.Stack;
 
 public interface TextConvector {
 
-
     void transform(Stack<ChapterInstance> chapterInstances, Element el);
 }

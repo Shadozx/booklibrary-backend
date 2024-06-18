@@ -1,10 +1,8 @@
 package com.shadoww.BookLibraryApp.dto.response;
 
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.shadoww.BookLibraryApp.models.Book;
-import com.shadoww.BookLibraryApp.models.images.BookImage;
+import com.shadoww.BookLibraryApp.model.Book;
+import com.shadoww.BookLibraryApp.model.image.BookImage;
 import lombok.Value;
 
 @Value

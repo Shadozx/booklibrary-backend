@@ -1,11 +1,10 @@
 package com.shadoww.BookLibraryApp.util.parser.parsers;
 
-import com.shadoww.BookLibraryApp.models.images.BookImage;
+import com.shadoww.BookLibraryApp.model.image.BookImage;
 import lombok.Setter;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 

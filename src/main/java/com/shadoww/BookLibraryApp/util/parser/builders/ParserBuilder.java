@@ -1,30 +1,25 @@
 package com.shadoww.BookLibraryApp.util.parser.builders;
 
-import com.shadoww.BookLibraryApp.util.parser.parsers.BookImageParser;
-import com.shadoww.BookLibraryApp.util.parser.parsers.BookParser;
-import com.shadoww.BookLibraryApp.util.parser.parsers.ChapterParser;
 import com.shadoww.BookLibraryApp.util.parser.parsers.Parser;
-import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 //@Getter
 public class ParserBuilder {
-
-
-    private BookImageParserBuilder bookImageParserBuilder;
-
     private BookParserBuilder bookParserBuilder;
-
-
+    private BookImageParserBuilder bookImageParserBuilder;
     private ChapterParserBuilder chapterParserBuilder;
-
-
 
     private BooksParserBuilder booksParserBuilder;
 
+    private AuthorParserBuilder authorParserBuilder;
 
-    public ParserBuilder() {}
+    private BookSeriesParserBuilder bookSeriesParserBuilder;
+
+    private String host;
+
+    public ParserBuilder() {
+    }
 
     public BookImageParserBuilder bookImage() {
         this.bookImageParserBuilder = new BookImageParserBuilder(this);
@@ -33,46 +28,64 @@ public class ParserBuilder {
     }
 
     public BookParserBuilder book() {
-        this.bookParserBuilder = new BookParserBuilder(this);
+        bookParserBuilder = new BookParserBuilder(this);
 
-        return this.bookParserBuilder;
+        return bookParserBuilder;
+    }
+
+    public BooksParserBuilder books() {
+        booksParserBuilder = new BooksParserBuilder(this);
+        return booksParserBuilder;
+    }
+
+    public AuthorParserBuilder author() {
+        return authorParserBuilder = new AuthorParserBuilder(this);
+    }
+
+    public BookSeriesParserBuilder series() {
+        return bookSeriesParserBuilder = new BookSeriesParserBuilder(this);
     }
 
     public ChapterParserBuilder chapters() {
+        chapterParserBuilder = new ChapterParserBuilder(this);
 
-        this.chapterParserBuilder = new ChapterParserBuilder(this);
-
-        return this.chapterParserBuilder;
+        return chapterParserBuilder;
     }
 
+    public ParserBuilder host(String host) {
+        this.host = host;
 
-    public BooksParserBuilder books() {
-        this.booksParserBuilder = new BooksParserBuilder(this);
-
-        return this.booksParserBuilder;
+        return this;
     }
-
-
-
-    public ParserBuilder and() { return null; }
-
 
     public Parser build() {
-         Parser parser = new Parser();
+        Parser parser = new Parser();
 
-         if (bookParserBuilder != null)
-             parser.setBookParser(bookParserBuilder.getBookParser());
+        if (bookParserBuilder != null) {
+            parser.setBookParser(bookParserBuilder.getBookParser());
+        }
+        if (bookImageParserBuilder != null) {
+            parser.setBookImageParser(bookImageParserBuilder.getBookImageParser());
+        }
+        if (chapterParserBuilder != null) {
+            parser.setChapterParser(chapterParserBuilder.getChapterParser());
+        }
+        if (authorParserBuilder != null) {
+            parser.setAuthorParser(authorParserBuilder.getAuthorParser());
+        }
 
-         if (bookImageParserBuilder != null)
-             parser.setBookImageParser(bookImageParserBuilder.getBookImageParser());
+        if (bookSeriesParserBuilder != null) {
+            parser.setBookSeriesParser(bookSeriesParserBuilder.getBookSeriesParser());
+        }
 
-         if (chapterParserBuilder != null)
-             parser.setChapterParser(chapterParserBuilder.getChapterParser());
+        if (host != null) {
+            parser.setHost(host);
+        }
 
+        if (booksParserBuilder != null) {
+            parser.setBooksParser(booksParserBuilder.getBooksParser());
+        }
 
-         if (booksParserBuilder !=null)
-             parser.setBooksParser(booksParserBuilder.getBooksParser());
         return parser;
     }
-
 }

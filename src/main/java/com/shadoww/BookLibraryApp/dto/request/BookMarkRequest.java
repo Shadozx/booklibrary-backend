@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 public class BookMarkRequest {
 
-    private int bookId;
-    private int chapterId;
+    private long bookId;
+    private long chapterId;
     private int paragraph;
 
 

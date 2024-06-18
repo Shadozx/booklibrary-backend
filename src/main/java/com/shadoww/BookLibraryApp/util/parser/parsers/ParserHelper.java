@@ -1,10 +1,10 @@
 package com.shadoww.BookLibraryApp.util.parser.parsers;
 
-import com.shadoww.BookLibraryApp.models.Book;
-import com.shadoww.BookLibraryApp.models.Chapter;
-import com.shadoww.BookLibraryApp.models.images.BookImage;
-import com.shadoww.BookLibraryApp.models.images.ChapterImage;
-import com.shadoww.BookLibraryApp.models.images.Image;
+import com.shadoww.BookLibraryApp.model.Book;
+import com.shadoww.BookLibraryApp.model.Chapter;
+import com.shadoww.BookLibraryApp.model.image.BookImage;
+import com.shadoww.BookLibraryApp.model.image.ChapterImage;
+import com.shadoww.BookLibraryApp.model.image.Image;
 import com.shadoww.BookLibraryApp.util.instances.ChapterInstance;
 import com.shadoww.BookLibraryApp.util.texformatters.TextFormatter;
 import com.shadoww.BookLibraryApp.util.texformatters.elements.TextElement;
@@ -15,7 +15,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -35,7 +34,7 @@ public class ParserHelper {
 //                    .userAgent("Mozilla")
                 .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0")
                 .maxBodySize(0)
-                .timeout(600000)
+                .timeout(60_0000)
                 .get();
     }
 
@@ -60,7 +59,7 @@ public class ParserHelper {
     }
 
     public static List<Chapter> addNumber(List<Chapter> chapters) {
-        for(int i = 1; i <= chapters.size(); i++) chapters.get(i-1).setNumberOfPage(i);
+        for(int i = 1; i <= chapters.size(); i++) chapters.get(i-1).setChapterNumber(i);
 
         return chapters;
     }

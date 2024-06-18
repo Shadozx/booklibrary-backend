@@ -2,7 +2,7 @@ package com.shadoww.BookLibraryApp.mapper.impl;
 
 import com.shadoww.BookLibraryApp.dto.request.BookCatalogRequest;
 import com.shadoww.BookLibraryApp.mapper.BookCatalogMapper;
-import com.shadoww.BookLibraryApp.models.BookCatalog;
+import com.shadoww.BookLibraryApp.model.BookCatalog;
 import org.springframework.stereotype.Component;
 
 @Component

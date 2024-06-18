@@ -1,8 +1,6 @@
 package com.shadoww.BookLibraryApp.dto.response;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.shadoww.BookLibraryApp.models.Chapter;
+import com.shadoww.BookLibraryApp.model.Chapter;
 import lombok.Value;
 
 @Value
@@ -24,6 +22,6 @@ public class ChapterResponse {
         this.title = chapter.getTitle();
         this.text = chapter.getText();
         this.bookId = chapter.getBook().getId();
-        this.chapterNumber = chapter.getNumberOfPage();
+        this.chapterNumber = chapter.getChapterNumber();
     }
 }

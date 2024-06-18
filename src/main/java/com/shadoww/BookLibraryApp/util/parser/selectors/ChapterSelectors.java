@@ -5,7 +5,6 @@ import com.shadoww.BookLibraryApp.util.parser.interfaces.ChapterLinks;
 import com.shadoww.BookLibraryApp.util.parser.interfaces.ChapterSelectorSwitcher;
 import com.shadoww.BookLibraryApp.util.parser.interfaces.ElementsFormatter;
 import com.shadoww.BookLibraryApp.util.parser.interfaces.FilterElements;
-import com.shadoww.BookLibraryApp.util.parser.parsers.ChapterParser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +20,7 @@ public class ChapterSelectors extends Stack<ChapterSelector> {
     // Звідки брати силки на глави
     private ChapterLinks chapterLinks;
 
-    private List<String> forDeleteElements;
+    private List<String> deleteElements;
 
     private FilterElements filterElements;
 
@@ -29,16 +28,20 @@ public class ChapterSelectors extends Stack<ChapterSelector> {
 
     private ElementsFormatter elementsFormatter;
 
-    public void addForDeleteElement(String element) {
-        if (forDeleteElements == null) forDeleteElements = new ArrayList<>();
+    public void addDeleteElement(String element) {
+        if (deleteElements == null) {
+            deleteElements = new ArrayList<>();
+        }
 
-        forDeleteElements.add(element);
+        deleteElements.add(element);
     }
 
-    public void addForDeleteElements(String... elements) {
-        if (forDeleteElements == null) forDeleteElements = new ArrayList<>();
+    public void addDeleteElements(String... elements) {
+        if (deleteElements == null) {
+            deleteElements = new ArrayList<>();
+        }
 
-        forDeleteElements.addAll(Arrays.stream(elements).toList());
+        deleteElements.addAll(Arrays.asList(elements));
     }
 }
 

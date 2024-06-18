@@ -1,7 +1,7 @@
 package com.shadoww.BookLibraryApp.util.instances;
 
 
-import com.shadoww.BookLibraryApp.models.images.ChapterImage;
+import com.shadoww.BookLibraryApp.model.image.ChapterImage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,14 +30,13 @@ public class ChapterInstance {
     }
 
     public void addTitle(String title) {
-        this.title += this.title == "" ? title : "\n" + title;
+        this.title += title;
     }
-
 
 
     public void addText(String text) {
         if(!this.hasText(text)) {
-            this.text += this.text == "" ? text : "\n" + text;
+            this.text += Objects.equals(this.text, "") ? text : "\n" + text;
         }
     }
 

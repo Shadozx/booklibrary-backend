@@ -1,7 +1,7 @@
 package com.shadoww.BookLibraryApp.util.formatters;
 
-import com.shadoww.BookLibraryApp.models.Chapter;
-import com.shadoww.BookLibraryApp.models.images.Image;
+import com.shadoww.BookLibraryApp.model.Chapter;
+import com.shadoww.BookLibraryApp.model.image.Image;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class _222TextFormatter {
 
     private _222TextFormatter() {}

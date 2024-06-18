@@ -1,8 +1,8 @@
 package com.shadoww.BookLibraryApp.dto.response;
 
-import com.shadoww.BookLibraryApp.models.user.Person;
-import com.shadoww.BookLibraryApp.models.user.Role;
-import com.shadoww.BookLibraryApp.models.user.Theme;
+import com.shadoww.BookLibraryApp.model.user.Person;
+import com.shadoww.BookLibraryApp.model.user.Role;
+import com.shadoww.BookLibraryApp.model.user.Theme;
 import lombok.Value;
 
 @Value
@@ -10,6 +10,7 @@ public class PersonResponse {
 
     long id;
 
+    String email;
     String username;
 
     String roleName;
@@ -20,6 +21,7 @@ public class PersonResponse {
 
     public PersonResponse(Person person) {
         this.id = person.getId();
+        this.email = person.getEmail();
         this.username = person.getUsername();
         this.roleName = person.getRole() == null ? Role.USER.name() : person.getRole().name();
         if (person.getPersonImage() != null) {

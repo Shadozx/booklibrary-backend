@@ -1,6 +1,6 @@
 package com.shadoww.BookLibraryApp.dto.response;
 
-import com.shadoww.BookLibraryApp.models.BookCatalog;
+import com.shadoww.BookLibraryApp.model.BookCatalog;
 import lombok.Value;
 
 @Value

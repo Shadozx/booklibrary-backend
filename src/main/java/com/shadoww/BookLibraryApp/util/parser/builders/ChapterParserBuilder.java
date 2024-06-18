@@ -2,11 +2,9 @@ package com.shadoww.BookLibraryApp.util.parser.builders;
 
 import com.shadoww.BookLibraryApp.util.parser.interfaces.*;
 import com.shadoww.BookLibraryApp.util.parser.parsers.ChapterParser;
-import com.shadoww.BookLibraryApp.util.parser.selectors.ChapterSelector;
 import com.shadoww.BookLibraryApp.util.parser.selectors.ChapterSelectors;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -55,7 +53,7 @@ public class ChapterParserBuilder {
     }
 
     public ChapterParserBuilder deleteElements(String... elements) {
-        this.chapterSelectors.addForDeleteElements(elements);
+        this.chapterSelectors.addDeleteElements(elements);
 
         return this;
     }

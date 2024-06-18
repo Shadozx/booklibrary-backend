@@ -14,7 +14,7 @@ public class ChapterRequest {
 
     private String text;
 
-    private int numberOfPage;
+    private int chapterNumber;
 
 
     public boolean isEmpty() {
@@ -30,7 +30,7 @@ public class ChapterRequest {
     }
 
     public boolean isNumberOfPageEmpty() {
-        return numberOfPage <=0;
+        return chapterNumber <=0;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ChapterRequest {
         return "ChapterForm{" +
                 "title='" + title + '\'' +
                 ", text='" + text + '\'' +
-                ", numberOfPage=" + numberOfPage +
+                ", numberOfPage=" + chapterNumber +
                 '}';
     }
 }

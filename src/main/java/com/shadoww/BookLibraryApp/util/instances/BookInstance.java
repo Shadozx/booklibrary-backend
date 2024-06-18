@@ -1,6 +1,7 @@
 package com.shadoww.BookLibraryApp.util.instances;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class BookInstance {
 
     private String title;

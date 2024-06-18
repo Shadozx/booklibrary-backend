@@ -10,6 +10,6 @@ import lombok.Setter;
 public class BookRatingRequest {
 
     private int rating;
-    private int bookId;
+    private long bookId;
 
 }

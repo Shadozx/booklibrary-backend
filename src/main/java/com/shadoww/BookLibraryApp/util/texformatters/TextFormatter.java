@@ -1,9 +1,9 @@
 package com.shadoww.BookLibraryApp.util.texformatters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shadoww.BookLibraryApp.models.Chapter;
-import com.shadoww.BookLibraryApp.models.images.ChapterImage;
-import com.shadoww.BookLibraryApp.models.images.Image;
+import com.shadoww.BookLibraryApp.model.Chapter;
+import com.shadoww.BookLibraryApp.model.image.ChapterImage;
+import com.shadoww.BookLibraryApp.model.image.Image;
 import com.shadoww.BookLibraryApp.util.texformatters.elements.TextElement;
 import com.shadoww.BookLibraryApp.util.texformatters.elements.TextElements;
 import com.shadoww.BookLibraryApp.util.texformatters.types.ElementType;

@@ -1,7 +1,7 @@
 package com.shadoww.BookLibraryApp.dto.response;
 
-import com.shadoww.BookLibraryApp.models.BookMark;
-import com.shadoww.BookLibraryApp.models.Chapter;
+import com.shadoww.BookLibraryApp.model.BookMark;
+import com.shadoww.BookLibraryApp.model.Chapter;
 import lombok.Value;
 
 @Value
