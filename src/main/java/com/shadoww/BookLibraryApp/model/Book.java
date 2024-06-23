@@ -68,39 +68,57 @@ public class Book {
     @Cascade({CascadeType.REMOVE, CascadeType.DELETE})
     private BookImage bookImage;
 
-    @OneToMany(mappedBy = "book", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BookMark> bookMarks;
+    @OneToMany(mappedBy = "book", orphanRemoval = true)
+    @Cascade({CascadeType.REMOVE, CascadeType.DELETE})
+    private List<BookMark> bookMarks = new ArrayList<>();
 
     /**
      * Глави книжки
      **/
     @OneToMany(mappedBy = "book", orphanRemoval = true, fetch = FetchType.LAZY)
     @Cascade({CascadeType.DELETE, CascadeType.REMOVE})
-    List<Chapter> chapters;
+    List<Chapter> chapters = new ArrayList<>();
 
     @OneToMany(mappedBy = "book", orphanRemoval = true)
     @Cascade({CascadeType.DELETE, CascadeType.REMOVE})
-    private List<BookRating> bookRatings;
+    private List<BookRating> bookRatings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", orphanRemoval = true)
+    @OneToMany(mappedBy = "book", orphanRemoval = true, cascade = {jakarta.persistence.CascadeType.REMOVE})
     @Cascade({CascadeType.DELETE, CascadeType.REMOVE})
-    private List<BookComment> comments;
+    private List<BookComment> comments = new ArrayList<>();
 
     /**
      * Серії, до яких належить книжка
      **/
-    @ManyToMany
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {
+                    jakarta.persistence.CascadeType.DETACH,
+                    jakarta.persistence.CascadeType.MERGE,
+                    jakarta.persistence.CascadeType.PERSIST,
+                    jakarta.persistence.CascadeType.REFRESH
+            }
+    )
     @JoinTable(
             name = "book_series_books",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "series_id")
+            joinColumns = @JoinColumn(
+                    name = "book_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "series_id", referencedColumnName = "id")
     )
     private List<BookSeries> series;
 
     /**
      * Автори книжки
      **/
-    @ManyToMany
+    @ManyToMany(
+            cascade = {
+                    jakarta.persistence.CascadeType.DETACH,
+                    jakarta.persistence.CascadeType.MERGE,
+                    jakarta.persistence.CascadeType.PERSIST,
+                    jakarta.persistence.CascadeType.REFRESH
+            }
+    )
     @JoinTable(
             name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),

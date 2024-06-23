@@ -2,9 +2,8 @@ package com.shadoww.BookLibraryApp.model.comment;
 
 import com.shadoww.BookLibraryApp.model.user.Person;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,10 +24,9 @@ public class Comment implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Min(value = 1, message = "Comment must have minimum a letter")
-    @Max(value = 200, message = "Comment must have maximum 200 letters")
+    @Size(min = 1, max = 200, message = "Comment must have from 1 to 200 letters")
     @NotBlank(message = "Comment cannot be empty")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String text;
 
     @Column(nullable = false)

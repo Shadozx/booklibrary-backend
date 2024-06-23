@@ -1,7 +1,6 @@
 package com.shadoww.BookLibraryApp.service.impl;
 
 import com.shadoww.BookLibraryApp.model.Book;
-import com.shadoww.BookLibraryApp.model.BookCatalog;
 import com.shadoww.BookLibraryApp.model.BookMark;
 import com.shadoww.BookLibraryApp.model.user.Person;
 import com.shadoww.BookLibraryApp.repository.BookMarksRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -87,6 +85,11 @@ public class BookMarkServiceImpl implements BookMarkService {
     public void deleteById(Long id) {
         BookMark mark = readById(id);
         delete(mark);
+    }
+
+    @Override
+    public long count() {
+        return bookMarksRepository.count();
     }
 
     @Override

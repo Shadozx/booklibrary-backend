@@ -83,6 +83,7 @@ public class ParserFactory {
 
                 .author()
                 .nameSelector("h1.names > span.name")
+                .matcher("\\/list\\/person\\/.+")
                 .biographySelector("div.flex-row > div.manga-description")
                 .deleteElements("noindex")
                 .and()
@@ -105,7 +106,8 @@ public class ParserFactory {
                     List<String> links = new ArrayList<>();
 
                     if (elements.isEmpty()) {
-                        throw new RuntimeException("Глави відстутні!!!");
+                        System.out.println("Глави відстутні!!!");
+                        return List.of();
                     }
 
 
@@ -186,7 +188,7 @@ public class ParserFactory {
 
                 .chapter()
                 .selector("#main")
-                .text(".book, .poem, center img")
+                .text(".book, .poem, center img, p img")
                 .title("h3.book")
                 .textConvector((chapterInstances, el) -> {
                     ChapterInstance prev = !chapterInstances.isEmpty() ? chapterInstances.pop() : new ChapterInstance();

@@ -8,9 +8,6 @@ import com.shadoww.BookLibraryApp.security.AuthUser;
 import com.shadoww.BookLibraryApp.service.interfaces.PersonService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -121,6 +118,11 @@ public class PersonServiceImpl implements PersonService {
     @Transactional
     public void deleteById(Long id) {
         delete(readById(id));
+    }
+
+    @Override
+    public long count() {
+        return peopleRepository.count();
     }
 
     @Override

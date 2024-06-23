@@ -3,6 +3,7 @@ package com.shadoww.BookLibraryApp.model.image;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class Image implements Serializable {
     // default value content type is image/jpeg
     private String contentType = "image/jpeg";
 
-    @NotBlank(message = "Image must have data")
+//    @NotNull(message = "Image must have data")
     @Column(columnDefinition = "bytea", nullable = false)
     private byte[] data;
 

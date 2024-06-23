@@ -76,6 +76,11 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
+    public long count() {
+        return chaptersRepository.count();
+    }
+
+    @Override
     public List<Chapter> getAll() {
         return chaptersRepository.findAll();
     }

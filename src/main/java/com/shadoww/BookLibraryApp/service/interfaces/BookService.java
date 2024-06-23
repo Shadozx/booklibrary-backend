@@ -13,6 +13,8 @@ public interface BookService extends CrudService<Book, Long> {
 
     Book getByUrl(String url);
 
+    Book getByTitle(String title);
+
     boolean existByTitle(String title);
 
     boolean existsByUrl(String uploadedUrl);

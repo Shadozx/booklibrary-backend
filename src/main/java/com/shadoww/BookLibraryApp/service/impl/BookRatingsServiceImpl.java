@@ -73,6 +73,11 @@ public class BookRatingsServiceImpl implements BookRatingService {
     }
 
     @Override
+    public long count() {
+        return bookRatingsRepository.count();
+    }
+
+    @Override
     public List<BookRating> getAll() {
         return bookRatingsRepository.findAll();
     }

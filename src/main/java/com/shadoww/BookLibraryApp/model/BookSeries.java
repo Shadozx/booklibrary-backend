@@ -44,7 +44,15 @@ public class BookSeries {
     /**
      * Книги, що входять до серії
      **/
-    @ManyToMany(mappedBy = "series")
+    @ManyToMany(
+            mappedBy = "series",
+            cascade = {
+                    jakarta.persistence.CascadeType.DETACH,
+                    jakarta.persistence.CascadeType.MERGE,
+                    jakarta.persistence.CascadeType.PERSIST,
+                    jakarta.persistence.CascadeType.REFRESH
+            }
+    )
     private List<Book> books;
 
 
@@ -58,13 +66,12 @@ public class BookSeries {
 //            inverseJoinColumns = @JoinColumn(name = "author_id")
 //    )
 //    private List<Author> authors;
-
     public BookSeries(String title, String description) {
         this.title = title;
         this.description = description;
     }
 
-    public void addABook(Book book) {
+    public void addBook(Book book) {
         if (this.books == null) {
             this.books = new ArrayList<>();
         }

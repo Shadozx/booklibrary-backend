@@ -1,6 +1,7 @@
 package com.shadoww.BookLibraryApp.service.impl;
 
 import com.shadoww.BookLibraryApp.model.Author;
+import com.shadoww.BookLibraryApp.model.Book;
 import com.shadoww.BookLibraryApp.repository.book.AuthorsRepository;
 import com.shadoww.BookLibraryApp.service.interfaces.AuthorService;
 import com.shadoww.BookLibraryApp.service.interfaces.BookService;
@@ -19,6 +20,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorsRepository authorsRepository;
 
     private final BookService bookService;
+
     @Autowired
     public AuthorServiceImpl(AuthorsRepository authorsRepository, BookService bookService) {
         this.authorsRepository = authorsRepository;
@@ -36,13 +38,13 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Author readById(Long id) {
         return authorsRepository.findById(id)
-                .orElseThrow(()->new EntityNotFoundException("Такого автора не існує..."));
+                .orElseThrow(() -> new EntityNotFoundException("Такого автора не існує..."));
     }
 
     @Override
     public Author readByName(String name) {
         return findByName(name)
-                .orElseThrow(()->new EntityNotFoundException("Такого автора не існує!"));
+                .orElseThrow(() -> new EntityNotFoundException("Такого автора не існує!"));
     }
 
     @Override
@@ -75,10 +77,23 @@ public class AuthorServiceImpl implements AuthorService {
         return save(author);
     }
 
-@Override
+    @Override
     @Transactional
     public void deleteById(Long id) {
-        delete(readById(id));
+        Author author = readById(id);
+
+        List<Book> books = author.getBooks();
+
+        for (var b : books) {
+            b.getAuthors().remove(author);
+        }
+
+        delete(author);
+    }
+
+    @Override
+    public long count() {
+        return authorsRepository.count();
     }
 
 

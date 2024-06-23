@@ -73,6 +73,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public long count() {
+        return commentsRepository.count();
+    }
+
+    @Override
     public List<Comment> getAll() {
         return commentsRepository.findAll();
     }

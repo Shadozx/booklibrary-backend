@@ -44,6 +44,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public Book getByTitle(String title) {
+        return booksRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Книжки з такою назвою не існує"));
+    }
+
+    @Override
     public boolean existsById(Long id) {
         return booksRepository.existsById(id);
     }
@@ -73,7 +78,30 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        delete(readById(id));
+        Book book = readById(id);
+
+        List<Author> authors = book.getAuthors();
+
+        if (authors != null) {
+            for (var a : authors) {
+                a.getBooks().remove(book);
+            }
+        }
+
+        List<BookSeries> bookSeries = book.getSeries();
+
+        if (bookSeries != null) {
+            for (var s : bookSeries) {
+                s.getBooks().remove(book);
+            }
+        }
+
+        delete(book);
+    }
+
+    @Override
+    public long count() {
+        return booksRepository.count();
     }
 
     @Override

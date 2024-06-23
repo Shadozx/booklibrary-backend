@@ -72,6 +72,11 @@ public class BookCatalogServiceImpl implements BookCatalogService {
     }
 
     @Override
+    public long count() {
+        return bookCatalogsRepository.count();
+    }
+
+    @Override
     public List<BookCatalog> getAll() {
         return bookCatalogsRepository.findAll();
     }

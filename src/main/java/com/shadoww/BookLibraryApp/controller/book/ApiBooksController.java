@@ -3,11 +3,13 @@ package com.shadoww.BookLibraryApp.controller.book;
 
 import com.shadoww.BookLibraryApp.dto.request.book.BookFilterRequest;
 import com.shadoww.BookLibraryApp.dto.request.book.BookLinkRequest;
+import com.shadoww.BookLibraryApp.dto.request.book.BookRequest;
 import com.shadoww.BookLibraryApp.dto.response.AuthorResponse;
 import com.shadoww.BookLibraryApp.dto.response.BookResponse;
-import com.shadoww.BookLibraryApp.dto.request.book.BookRequest;
 import com.shadoww.BookLibraryApp.dto.response.BookSeriesResponse;
+import com.shadoww.BookLibraryApp.model.Author;
 import com.shadoww.BookLibraryApp.model.Book;
+import com.shadoww.BookLibraryApp.model.BookSeries;
 import com.shadoww.BookLibraryApp.model.image.BookImage;
 import com.shadoww.BookLibraryApp.service.interfaces.AuthorService;
 import com.shadoww.BookLibraryApp.service.interfaces.BookSeriesService;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 @PreAuthorize("hasRole('USER')")
 @RestController
@@ -32,15 +35,15 @@ import java.util.List;
 public class ApiBooksController {
 
     private final BooksFormatter booksFormatter;
-
     private final AuthorService authorService;
-
     private final BookSeriesService bookSeriesService;
     private final BookService bookService;
 
-
     @Autowired
-    public ApiBooksController(BooksFormatter booksFormatter, AuthorService authorService, BookSeriesService bookSeriesService, BookService bookService) {
+    public ApiBooksController(BooksFormatter booksFormatter,
+                              AuthorService authorService,
+                              BookSeriesService bookSeriesService,
+                              BookService bookService) {
         this.booksFormatter = booksFormatter;
         this.authorService = authorService;
         this.bookSeriesService = bookSeriesService;
@@ -61,8 +64,7 @@ public class ApiBooksController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<?> filterBooks(
-            @RequestBody BookFilterRequest request) {
+    public ResponseEntity<?> filterBooks(@RequestBody BookFilterRequest request) {
 
         return ResponseEntity.ok(bookService.filterBooks(request)
                 .stream()
@@ -75,7 +77,7 @@ public class ApiBooksController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> addBook(@RequestBody BookLinkRequest request) {
+    public ResponseEntity<?> parseBook(@RequestBody BookLinkRequest request) {
         String url = request.getUrl();
 
         System.out.println("BookUrl: " + "\"" + url + "\"");
@@ -159,26 +161,26 @@ public class ApiBooksController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{bookId}")
     public ResponseEntity<?> updateBook(@PathVariable long bookId,
-                                        @RequestBody BookRequest form) {
+                                        @RequestBody BookRequest request) {
 
-        if (form.isEmpty()) return ResponseBook.noContent();
+        if (request.isEmpty()) return ResponseBook.noContent();
 
         Book book = bookService.readById(bookId);
 
 
-        if (!form.isTitleEmpty()) {
-            book.setTitle(form.getTitle());
+        if (!request.isTitleEmpty()) {
+            book.setTitle(request.getTitle());
         }
 
-        if (!form.isDescriptionEmpty()) {
-            book.setDescription(form.getDescription());
+        if (!request.isDescriptionEmpty()) {
+            book.setDescription(request.getDescription());
         }
 
-        if (!form.isBookImageUrlEmpty()) {
+        if (!request.isBookImageUrlEmpty()) {
 
             try {
 
-                BookImage parsedImage = (BookImage) ParserHelper.parseImage(form.getBookImage());
+                BookImage parsedImage = (BookImage) ParserHelper.parseImage(request.getBookImage());
 
                 BookImage bookImage = book.getBookImage();
 
@@ -196,8 +198,9 @@ public class ApiBooksController {
                 System.out.println("Error message in adding book with message:" + e.getMessage());
                 return ResponseBook.errorServer();
             }
-        } else {
-            bookService.create(book);
+        }
+        else {
+            bookService.update(book);
         }
 
         return ResponseBook.addSuccess();
@@ -212,7 +215,6 @@ public class ApiBooksController {
 
         bookService.deleteById(id);
 
-
         return ResponseBook.deleteSuccess();
     }
 
@@ -221,7 +223,8 @@ public class ApiBooksController {
     public ResponseEntity<?> reloadChapters(@PathVariable long bookId) throws IOException {
         Book book = bookService.readById(bookId);
 
-        booksFormatter.parseBookChapters(book);
+        booksFormatter.reParseBookChapters(book);
+
         return ResponseEntity.ok("Дана книжка була успішно перегружена");
     }
 
@@ -235,6 +238,60 @@ public class ApiBooksController {
         return ResponseEntity.ok(authors);
     }
 
+    // add book author
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/authors")
+    public ResponseEntity<Void> addAuthor(@PathVariable long id,
+                                          @RequestBody Map<String, Long> requestBody) {
+
+        long authorId = requestBody.get("author_id");
+
+        Book book = bookService.readById(id);
+
+        Author author = authorService.readById(authorId);
+
+        List<Author> authors = book.getAuthors();
+
+        if (authors.contains(author)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        authors.add(author);
+
+        bookService.update(book);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    // add book author
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}/authors")
+    public ResponseEntity<Void> removeAuthor(@PathVariable long id,
+                                          @RequestBody Map<String, Long> requestBody) {
+
+        long authorId = requestBody.get("author_id");
+
+        Book book = bookService.readById(id);
+
+        Author author = authorService.readById(authorId);
+
+        List<Author> authors = book.getAuthors();
+
+        if (!authors.contains(author)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        authors.remove(author);
+
+        bookService.update(book);
+
+        return ResponseEntity
+                .ok()
+                .build();
+    }
+
     @GetMapping("/{bookId}/bookseries")
     public ResponseEntity<?> getBookSeriesByBook(@PathVariable long bookId) {
         List<BookSeriesResponse> bookSeries = bookSeriesService.getBookSeriesByBook(bookId)
@@ -243,5 +300,59 @@ public class ApiBooksController {
                 .toList();
 
         return ResponseEntity.ok(bookSeries);
+    }
+
+    // add a bookseries to book
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/bookseries")
+    public ResponseEntity<Void> addBookSeries(@PathVariable long id,
+                                          @RequestBody Map<String, Long> requestBody) {
+
+        long bookSeriesId = requestBody.get("bookseries_id");
+
+        Book book = bookService.readById(id);
+
+        BookSeries bookSeries = bookSeriesService.readById(bookSeriesId);
+
+        List<BookSeries> series = book.getSeries();
+
+        if (series.contains(bookSeries)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        series.add(bookSeries);
+
+        bookService.update(book);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .build();
+    }
+
+    // remove a bookseries from book
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}/bookseries")
+    public ResponseEntity<Void> removeBookSeries(@PathVariable long id,
+                                             @RequestBody Map<String, Long> requestBody) {
+
+        long bookSeriesId = requestBody.get("bookseries_id");
+
+        Book book = bookService.readById(id);
+
+        BookSeries bookSeries = bookSeriesService.readById(bookSeriesId);
+
+        List<BookSeries> series = book.getSeries();
+
+        if (!series.contains(bookSeries)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        series.add(bookSeries);
+
+        bookService.update(book);
+
+        return ResponseEntity
+                .ok()
+                .build();
     }
 }

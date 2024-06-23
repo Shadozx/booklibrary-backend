@@ -16,24 +16,30 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class BooksFormatter {
 
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
-    private BookSeriesService bookSeriesService;
+    private final BookSeriesService bookSeriesService;
 
-    private BookService bookService;
+    private final BookService bookService;
 
-    private ImageService imageService;
+    private final ImageService imageService;
 
 
-    private ChapterService chapterService;
+    private final ChapterService chapterService;
 
     @Autowired
-    public BooksFormatter(AuthorService authorService, BookSeriesService bookSeriesService, BookService bookService, ChapterService chapterService, ImageService imageService) {
+    public BooksFormatter(AuthorService authorService,
+                          BookSeriesService bookSeriesService,
+                          BookService bookService,
+                          ChapterService chapterService,
+                          ImageService imageService) {
         this.authorService = authorService;
         this.bookSeriesService = bookSeriesService;
         this.bookService = bookService;
@@ -65,21 +71,20 @@ public class BooksFormatter {
         System.out.println(u.getHost());
 
         List<Book> books = new ArrayList<>();
-
-        if (parser.canParseBook(url)) {
-
-            // якщо вже колись була додана до бібліотеки книга(щоб не дублювати дані)
-            if (existsBook(url)) {
-                throw new ValueAlreadyExistsException("Книжка з таким посиланням вже існує!");
-            }
-
-            books.add(parseFullBook(parser, url));
-        } else if (parser.canParseAuthorBooks(url)) {
+        if (parser.canParseAuthorBooks(url)) {
 
             books.addAll(parseAuthorBooks(parser, url));
         } else if (parser.canParseBookSeriesBooks(url)) {
 
             books.addAll(parseBookSeriesBooks(parser, url));
+        } else if (parser.canParseBook(url)) {
+
+            // якщо вже колись була додана до бібліотеки книга(щоб не дублювати дані)
+            if (existsBookByUrl(url)) {
+                throw new ValueAlreadyExistsException("Книжка з таким посиланням вже існує!");
+            }
+
+            books.add(parseFullBook(parser, url));
         } else {
             throw new IllegalArgumentException("Цей парсер нічого не підтримує");
         }
@@ -100,7 +105,7 @@ public class BooksFormatter {
         List<Book> books = new ArrayList<>();
 
         // якщо вже колись був доданий до бібліотеки автор книг(щоб не дублювати дані)
-        if (existsAuthor(url)) {
+        if (existsAuthorByUrl(url)) {
             throw new ValueAlreadyExistsException("Автор з таким посиланням вже існує!");
         }
 
@@ -129,9 +134,12 @@ public class BooksFormatter {
                 author = authorService.create(parsedAuthor);
             }
 
+            System.out.println(author);
             books.forEach(book -> book.addAllAuthors(List.of(author)));
 
             authorService.update(author);
+        }else {
+            System.out.println("Парсер не підтримує парсинг самого автора");
         }
 
         return books;
@@ -148,7 +156,7 @@ public class BooksFormatter {
         List<Book> books = new ArrayList<>();
 
         // якщо вже колись була додана до бібліотеки серія книг(щоб не дублювати дані)
-        if (existsBookSeries(url)) {
+        if (existsBookSeriesByUrl(url)) {
             throw new ValueAlreadyExistsException("Серія книг з таким посиланням вже існує!");
         }
 
@@ -188,11 +196,33 @@ public class BooksFormatter {
 
         checkIsParserNull(parser);
 
-        if (existsBook(url)) {
+        if (existsBookByUrl(url)) {
             return bookService.getByUrl(url);
         }
 
         Book book = parseBookDetails(parser, url);
+
+
+        if (existsBookByTitle(book.getTitle())) {
+            return bookService.getByTitle(book.getTitle());
+        }
+
+        BookImage bookImage = null;
+
+        if (parser.canParseBookImage()) {
+            bookImage = parser.parseBookImage(url);
+        }
+
+        book = bookService.create(book);
+
+        if (bookImage != null) {
+
+            book.setBookImage(bookImage);
+            bookImage.setBook(book);
+
+            imageService.create(bookImage);
+        }
+
         parseBookChapters(parser, book, url);
 
         return book;
@@ -210,21 +240,6 @@ public class BooksFormatter {
 
         if (book == null) {
             throw new RuntimeException("Сталася помилка при парсингу книги");
-        }
-
-        BookImage bookImage = null;
-        if (parser.canParseBookImage()) {
-            bookImage = parser.parseBookImage(url);
-        }
-
-        book = bookService.create(book);
-
-        if (bookImage != null) {
-
-            book.setBookImage(bookImage);
-            bookImage.setBook(book);
-
-            imageService.create(bookImage);
         }
 
 //        saveChapters(parser, book, url);
@@ -280,7 +295,45 @@ public class BooksFormatter {
                 book.getUploadedUrl());
     }
 
-    private boolean existsBook(String url) {
+    public List<Chapter> reParseBookChapters(Book book) throws IOException {
+
+        String url = book.getUploadedUrl();
+
+        Parser parser = ParserFactory.createParserForHost(new URL(url).getHost());
+
+        List<Chapter> chapters = parser.parseChapters(url, book);
+
+        if (chapters == null || chapters.isEmpty()) {
+            throw new RuntimeException("Перепарсити книгу не вдалося");
+        }
+
+        List<ChapterImage> images = parser.getImages();
+
+        chapterService.deleteByBook(book.getId());
+
+        book.setAmount(chapters.size());
+
+        System.out.println("Chapter size is "+ chapters.size());
+        int i = 1;
+        for (var c : chapters) {
+            c.setBook(book);
+            c.setChapterNumber(i++);
+
+            chapterService.create(c);
+        }
+
+        bookService.update(book);
+
+        // якщо є фотографії
+        if (images != null && !images.isEmpty()) {
+
+            imageService.deleteChaptersImages(chapterService.getBookChapters(book));
+            imageService.createChapterImages(images);
+        }
+
+        return chapters;
+    }
+    private boolean existsBookByUrl(String url) {
         if (bookService == null) {
             return false;
         }
@@ -288,7 +341,16 @@ public class BooksFormatter {
         return bookService.existsByUrl(url);
     }
 
-    private boolean existsAuthor(String url) {
+    private boolean existsBookByTitle(String title) {
+
+        if (bookService == null) {
+            return false;
+        }
+
+        return bookService.existByTitle(title);
+    }
+
+    private boolean existsAuthorByUrl(String url) {
         if (authorService == null) {
             return false;
         }
@@ -296,7 +358,7 @@ public class BooksFormatter {
         return authorService.existsByUrl(url);
     }
 
-    private boolean existsBookSeries(String url) {
+    private boolean existsBookSeriesByUrl(String url) {
         if (bookSeriesService == null) {
             return false;
         }
@@ -305,14 +367,15 @@ public class BooksFormatter {
     }
 
     private boolean existsUrl(String url) {
-        return existsBook(url) || existsBookSeries(url) || existsAuthor(url);
+        return existsBookByUrl(url) || existsBookSeriesByUrl(url) || existsAuthorByUrl(url);
     }
 
     private void checkIsParserNull(Parser parser) {
-        if(parser == null) {
+        if (parser == null) {
             throw new IllegalArgumentException("Парсер для стягування книг не повинен бути пустим!");
         }
     }
+
     /*public List<Chapter> parseChapters(Book book) {
         if (book != null) {
 

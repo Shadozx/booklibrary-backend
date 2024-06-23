@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,8 @@ public class Author {
     /**
      * Ім'я автора
      **/
-    @Column(unique = true, nullable = false)
     @NotBlank(message = "Name of the author cannot be empty")
+    @Column(unique = true, nullable = false)
     private String name;
 
     /**
@@ -43,7 +44,15 @@ public class Author {
     /**
      * Книги, написані автором
      **/
-    @ManyToMany(mappedBy = "authors")
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "authors",
+            cascade = {
+                    jakarta.persistence.CascadeType.DETACH,
+                    jakarta.persistence.CascadeType.MERGE,
+                    jakarta.persistence.CascadeType.PERSIST,
+                    jakarta.persistence.CascadeType.REFRESH
+            })
     private List<Book> books;
 
     /**
@@ -51,7 +60,6 @@ public class Author {
      **/
 //    @ManyToMany(mappedBy = "authors")
 //    private List<BookSeries> series;
-
     public Author(String name, String biography) {
         this.name = name;
         this.biography = biography;

@@ -1,5 +1,6 @@
 package com.shadoww.BookLibraryApp.service.impl;
 
+import com.shadoww.BookLibraryApp.model.Book;
 import com.shadoww.BookLibraryApp.model.BookSeries;
 import com.shadoww.BookLibraryApp.repository.book.BookSeriesRepository;
 import com.shadoww.BookLibraryApp.service.interfaces.BookSeriesService;
@@ -78,7 +79,21 @@ public class BookSeriesServiceImpl implements BookSeriesService {
     @Override
     @Transactional
     public void deleteById(Long id) {
+
+        BookSeries bookSeries = readById(id);
+
+        List<Book> books = bookSeries.getBooks();
+
+        for (var b : books) {
+            b.getSeries().remove(bookSeries);
+        }
+
         delete(readById(id));
+    }
+
+    @Override
+    public long count() {
+        return bookSeriesRepository.count();
     }
 
     @Override

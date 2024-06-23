@@ -21,13 +21,16 @@ public class ImageServiceImpl implements ImageService {
 
     private final BookService bookService;
 
-    private final ChapterService chapterservice;
+    private final ChapterService chapterService;
+
     private final ImagesRepository imagesRepository;
 
     @Autowired
-    public ImageServiceImpl(ImagesRepository imagesRepository, ChapterServiceImpl chapterservice, BookService bookService) {
+    public ImageServiceImpl(BookService bookService,
+                            ChapterServiceImpl chapterService,
+                            ImagesRepository imagesRepository) {
         this.imagesRepository = imagesRepository;
-        this.chapterservice = chapterservice;
+        this.chapterService = chapterService;
         this.bookService = bookService;
 
     }
@@ -54,7 +57,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image readById(Long id) {
         return imagesRepository.findById(id)
-                .orElseThrow(()->new EntityNotFoundException("Немає такої фотографії"));
+                .orElseThrow(() -> new EntityNotFoundException("Немає такої фотографії"));
     }
 
     @Override
@@ -64,7 +67,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image getImageByFilename(String filename) {
-        return imagesRepository.findImageByFilename(filename).orElseThrow(()->new EntityNotFoundException("Немає такої фотографії"));
+        return imagesRepository.findImageByFilename(filename).orElseThrow(() -> new EntityNotFoundException("Немає такої фотографії"));
     }
 
     @Override
@@ -80,6 +83,11 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public void deleteById(Long id) {
         delete(readById(id));
+    }
+
+    @Override
+    public long count() {
+        return imagesRepository.count();
     }
 
     @Override
@@ -99,9 +107,11 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void deleteChaptersImages(List<Chapter> chapters) {
-        if (chapters != null && !chapters.isEmpty())
-            for (var c : chapters)
+        if (chapters != null) {
+            for (var c : chapters) {
                 deleteChapterImages(c.getImages());
+            }
+        }
     }
 
     @Override
@@ -111,9 +121,11 @@ public class ImageServiceImpl implements ImageService {
 
         delete(book.getBookImage());
 
-        List<Chapter> chapters = chapterservice.getBookChapters(book);
+        List<Chapter> chapters = chapterService.getBookChapters(book);
 
-        if (!chapters.isEmpty()) chapters.forEach(c -> deleteChapterImages(c.getImages()));
+        if (!chapters.isEmpty()) {
+            chapters.forEach(c -> deleteChapterImages(c.getImages()));
+        }
     }
 
     @Override
