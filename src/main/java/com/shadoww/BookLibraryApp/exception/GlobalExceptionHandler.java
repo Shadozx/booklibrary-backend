@@ -65,18 +65,18 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(e, HttpStatus.CONFLICT, request);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e, WebRequest request) {
-//
-//        System.out.println(e.getMessage());
-////        Map<String, Object> response = new HashMap<>();
-////        response.put("message", "INTERNAL_SERVER_ERROR");
-////        response.put("error", e.getMessage());
-//
-////        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//
-//        return buildErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleInternalServerError(Exception e, WebRequest request) {
+
+        System.out.println(e.getMessage());
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("message", "INTERNAL_SERVER_ERROR");
+//        response.put("error", e.getMessage());
+
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+        return buildErrorResponse(e, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
 
     private ResponseEntity<ExceptionResponse> buildErrorResponse(Exception ex, HttpStatus status, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(

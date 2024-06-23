@@ -11,5 +11,7 @@ public interface ChapterService extends CrudService<Chapter, Long> {
 
     Chapter getChapterByBookAndNumber(Book book, int number);
 
-    List<Chapter> getBookChapters(Book book) ;
+    List<Chapter> getBookChapters(Book book);
+
+    void deleteByBook(long id);
 }
